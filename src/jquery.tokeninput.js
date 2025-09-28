@@ -101,24 +101,7 @@
     END    : 2
   };
 
-  // Keys "enum"
-  var KEY = {
-    BACKSPACE    : 8,
-    TAB          : 9,
-    ENTER        : 13,
-    ESCAPE       : 27,
-    SPACE        : 32,
-    PAGE_UP      : 33,
-    PAGE_DOWN    : 34,
-    END          : 35,
-    HOME         : 36,
-    LEFT         : 37,
-    UP           : 38,
-    RIGHT        : 39,
-    DOWN         : 40,
-    NUMPAD_ENTER : 108,
-    COMMA        : 188
-  };
+  // No KEY object needed - we use event.key string values directly
 
   var HTML_ESCAPES = {
     '&' : '&amp;',
@@ -296,7 +279,7 @@
               outline: "none"
           })
           .attr("id", $(input).data("settings").idPrefix + input.id)
-          .focus(function () {
+          .on("focus", function () {
               if ($(input).data("settings").disabled) {
                   return false;
               } else
@@ -305,7 +288,7 @@
               }
               token_list.addClass($(input).data("settings").classes.focused);
           })
-          .blur(function () {
+          .on("blur", function () {
               hide_dropdown();
 
               if ($(input).data("settings").allowFreeTagging) {
@@ -315,64 +298,65 @@
               $(this).val("");
               token_list.removeClass($(input).data("settings").classes.focused);
           })
-          .bind("keyup keydown blur update", resize_input)
-          .keydown(function (event) {
+          .on("keyup keydown blur update", resize_input)
+          .on("keydown", function (event) {
               var previous_token;
               var next_token;
+              var key = event.key;
 
-              switch(event.keyCode) {
-                  case KEY.LEFT:
-                  case KEY.RIGHT:
-                  case KEY.UP:
-                  case KEY.DOWN:
-                    if(this.value.length === 0) {
-                        previous_token = input_token.prev();
-                        next_token = input_token.next();
+                            switch(key) {
+                                    case "ArrowLeft":
+                                    case "ArrowRight":
+                                    case "ArrowUp":
+                                    case "ArrowDown":
+                                        if(this.value.length === 0) {
+                                                previous_token = input_token.prev();
+                                                next_token = input_token.next();
 
-                        if((previous_token.length && previous_token.get(0) === selected_token) ||
-                           (next_token.length && next_token.get(0) === selected_token)) {
-                            // Check if there is a previous/next token and it is selected
-                            if(event.keyCode === KEY.LEFT || event.keyCode === KEY.UP) {
-                                deselect_token($(selected_token), POSITION.BEFORE);
-                            } else {
-                                deselect_token($(selected_token), POSITION.AFTER);
-                            }
-                        } else if((event.keyCode === KEY.LEFT || event.keyCode === KEY.UP) && previous_token.length) {
-                            // We are moving left, select the previous token if it exists
-                            select_token($(previous_token.get(0)));
-                        } else if((event.keyCode === KEY.RIGHT || event.keyCode === KEY.DOWN) && next_token.length) {
-                            // We are moving right, select the next token if it exists
-                            select_token($(next_token.get(0)));
-                        }
-                    } else {
-                      var dropdown_item = null;
+                                                if((previous_token.length && previous_token.get(0) === selected_token) ||
+                                                     (next_token.length && next_token.get(0) === selected_token)) {
+                                                        // Check if there is a previous/next token and it is selected
+                                                        if(key === "ArrowLeft" || key === "ArrowUp") {
+                                                                deselect_token($(selected_token), POSITION.BEFORE);
+                                                        } else {
+                                                                deselect_token($(selected_token), POSITION.AFTER);
+                                                        }
+                                                } else if((key === "ArrowLeft" || key === "ArrowUp") && previous_token.length) {
+                                                        // We are moving left, select the previous token if it exists
+                                                        select_token($(previous_token.get(0)));
+                                                } else if((key === "ArrowRight" || key === "ArrowDown") && next_token.length) {
+                                                        // We are moving right, select the next token if it exists
+                                                        select_token($(next_token.get(0)));
+                                                }
+                                        } else {
+                                            var dropdown_item = null;
 
-                      if (event.keyCode === KEY.DOWN || event.keyCode === KEY.RIGHT) {
-                        dropdown_item = $(dropdown).find('li').first();
+                                            if (key === "ArrowDown" || key === "ArrowRight") {
+                                                dropdown_item = $(dropdown).find('li').first();
 
-                        if (selected_dropdown_item) {
-                          dropdown_item = $(selected_dropdown_item).next();
-                        }
-                      } else {
-                        dropdown_item = $(dropdown).find('li').last();
+                                                if (selected_dropdown_item) {
+                                                    dropdown_item = $(selected_dropdown_item).next();
+                                                }
+                                            } else {
+                                                dropdown_item = $(dropdown).find('li').last();
 
-                        if (selected_dropdown_item) {
-                          dropdown_item = $(selected_dropdown_item).prev();
-                        }
-                      }
+                                                if (selected_dropdown_item) {
+                                                    dropdown_item = $(selected_dropdown_item).prev();
+                                                }
+                                            }
 
-                      select_dropdown_item(dropdown_item);
-                    }
+                                            select_dropdown_item(dropdown_item);
+                                        }
 
-                    break;
+                                        break;
 
-                  case KEY.BACKSPACE:
+                  case "Backspace":
                       previous_token = input_token.prev();
 
                       if (this.value.length === 0) {
-                        if (selected_token) {
-                          delete_token($(selected_token));
-                          hiddenInput.change();
+                                                if (selected_token) {
+                                                    delete_token($(selected_token));
+                                                    hiddenInput.trigger("change");
                         } else if(previous_token.length) {
                           select_token($(previous_token.get(0)));
                         }
@@ -386,13 +370,13 @@
                       }
                       break;
 
-                  case KEY.TAB:
-                  case KEY.ENTER:
-                  case KEY.NUMPAD_ENTER:
-                  case KEY.COMMA:
+                  case "Tab":
+                  case "Enter":
+                  case "NumpadEnter":
+                  case ",":
                     if(selected_dropdown_item) {
                       add_token($(selected_dropdown_item).data("tokeninput"));
-                      hiddenInput.change();
+                                            hiddenInput.trigger("change");
                     } else {
                       if ($(input).data("settings").allowFreeTagging) {
                         if($(input).data("settings").allowTabOut && $(this).val() === "") {
@@ -411,7 +395,7 @@
                     }
                     return false;
 
-                  case KEY.ESCAPE:
+                  case "Escape":
                     hide_dropdown();
                     return true;
 
@@ -433,11 +417,11 @@
       var hiddenInput = $(input)
         .hide()
         .val("")
-        .focus(function () {
+                .on("focus", function () {
           focusWithTimeout(input_box);
         })
-        .blur(function () {
-          input_box.blur();
+                .on("blur", function () {
+                    input_box.trigger("blur");
 
           //return the object to this can be referenced in the callback functions.
           return hiddenInput;
@@ -452,7 +436,7 @@
       // The list to store the token items in
       var token_list = $("<ul />")
           .addClass($(input).data("settings").classes.tokenList)
-          .click(function (event) {
+          .on("click", function (event) {
               var li = $(event.target).closest("li");
               if(li && li.get(0) && $.data(li.get(0), "tokeninput")) {
                   toggle_select_token(li);
@@ -466,13 +450,13 @@
                   focusWithTimeout(input_box);
               }
           })
-          .mouseover(function (event) {
+          .on("mouseover", function (event) {
               var li = $(event.target).closest("li");
               if(li && selected_token !== this) {
                   li.addClass($(input).data("settings").classes.highlightedToken);
               }
           })
-          .mouseout(function (event) {
+          .on("mouseout", function (event) {
               var li = $(event.target).closest("li");
               if(li && selected_token !== this) {
                   li.removeClass($(input).data("settings").classes.highlightedToken);
@@ -511,7 +495,7 @@
       hiddenInput.val("");
       var li_data = $(input).data("settings").prePopulate || hiddenInput.data("pre");
 
-      if ($(input).data("settings").processPrePopulate && $.isFunction($(input).data("settings").onResult)) {
+      if ($(input).data("settings").processPrePopulate && typeof $(input).data("settings").onResult === "function") {
           li_data = $(input).data("settings").onResult.call(hiddenInput, li_data);
       }
 
@@ -595,14 +579,14 @@
       }
 
       function add_freetagging_tokens() {
-          var value = $.trim(input_box.val());
+          var value = (input_box.val() || "").trim();
           var tokens = value.split($(input).data("settings").tokenDelimiter);
           $.each(tokens, function(i, token) {
             if (!token) {
               return;
             }
 
-            if ($.isFunction($(input).data("settings").onFreeTaggingAdd)) {
+                        if (typeof $(input).data("settings").onFreeTaggingAdd === "function") {
               token = $(input).data("settings").onFreeTaggingAdd.call(hiddenInput, token);
             }
             var object = {};
@@ -627,10 +611,10 @@
             $("<span>" + $(input).data("settings").deleteText + "</span>")
                 .addClass($(input).data("settings").classes.tokenDelete)
                 .appendTo($this_token)
-                .click(function () {
+                .on("click", function () {
                     if (!$(input).data("settings").disabled) {
                         delete_token($(this).parent());
-                        hiddenInput.change();
+                        hiddenInput.trigger("change");
                         return false;
                     }
                 });
@@ -700,7 +684,7 @@
           hide_dropdown();
 
           // Execute the onAdd callback if defined
-          if($.isFunction(callback)) {
+          if(typeof callback === "function") {
               callback.call(hiddenInput,item);
           }
       }
@@ -794,7 +778,7 @@
           }
 
           // Execute the onDelete callback if defined
-          if($.isFunction(callback)) {
+          if(typeof callback === "function") {
               callback.call(hiddenInput,token_data);
           }
       }
@@ -900,12 +884,12 @@
               dropdown.empty();
               var dropdown_ul = $("<ul/>")
                   .appendTo(dropdown)
-                  .mouseover(function (event) {
+                  .on("mouseover", function (event) {
                       select_dropdown_item($(event.target).closest("li"));
                   })
-                  .mousedown(function (event) {
+                  .on("mousedown", function (event) {
                       add_token($(event.target).closest("li").data("tokeninput"));
-                      hiddenInput.change();
+                      hiddenInput.trigger("change");
                       return false;
                   })
                   .hide();
@@ -994,7 +978,7 @@
           var cache_key = query + computeURL();
           var cached_results = cache.get(cache_key);
           if (cached_results) {
-              if ($.isFunction($(input).data("settings").onCachedResult)) {
+                            if (typeof $(input).data("settings").onCachedResult === "function") {
                 cached_results = $(input).data("settings").onCachedResult.call(hiddenInput, cached_results);
               }
               populateDropdown(query, cached_results);
@@ -1044,7 +1028,7 @@
                   // Attach the success callback
                   ajax_params.success = function(results) {
                     cache.add(cache_key, $(input).data("settings").jsonContainer ? results[$(input).data("settings").jsonContainer] : results);
-                    if($.isFunction($(input).data("settings").onResult)) {
+                    if(typeof $(input).data("settings").onResult === "function") {
                         results = $(input).data("settings").onResult.call(hiddenInput, results);
                     }
 
@@ -1068,7 +1052,7 @@
                   });
 
                   cache.add(cache_key, results);
-                  if($.isFunction($(input).data("settings").onResult)) {
+                  if(typeof $(input).data("settings").onResult === "function") {
                       results = $(input).data("settings").onResult.call(hiddenInput, results);
                   }
                   populateDropdown(query, results);
@@ -1085,7 +1069,10 @@
       function focusWithTimeout(object) {
           setTimeout(
             function() {
-              object.focus();
+                            var element = object && object[0] ? object[0] : object;
+                            if (element && typeof element.focus === "function") {
+                                element.focus();
+                            }
             },
             50
           );
