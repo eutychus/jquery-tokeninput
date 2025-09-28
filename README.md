@@ -3,6 +3,8 @@
 
 [![CI](https://github.com/eutychus/jquery-tokeninput/actions/workflows/ci.yml/badge.svg)](https://github.com/eutychus/jquery-tokeninput/actions/workflows/ci.yml)
 
+> This is a maintained fork of the original [loopj/jquery-tokeninput](https://github.com/loopj/jquery-tokeninput) with updates for jQuery 3.x compatibility and modern build tools. Version 3.0.0+ requires jQuery 3.3.0 or higher.
+
 ## Overview
 
 Tokeninput is a jQuery plugin which allows your users to select multiple items
@@ -10,8 +12,23 @@ from a predefined list, using autocompletion as they type to find each item.
 You may have seen a similar type of text entry when filling in the recipients
 field sending messages on facebook.
 
+## Development Prerequisites
+
+- Node.js 24.x (CI runs with Node 24.0.0)
+- npm 11.x (bundled with Node 24)
+
+We ship an `.nvmrc` so you can quickly align with the required runtime:
+
+```bash
+nvm use
+```
+
+If you don’t have [nvm](https://github.com/nvm-sh/nvm) installed yet, run the install script from the project README and then re-run `nvm use` inside this repository. The command above will automatically switch you to Node 24.0.0 (or install it on first use).
+
 ## Features
 
+- Compatible with jQuery 3.3.0+ (modern JavaScript support)
+- Automatic minification and build process via GitHub Actions
 - Intuitive UI for selecting multiple items from a large list
 - Easy to skin/style purely in css, no images required
 - Supports any backend which can generate JSON, including PHP, Rails, Django, ASP.net
@@ -35,6 +52,21 @@ Vertical list style item selection
 Facebook style item selection
 
 ## Installation & Setup
+
+### Installation Options
+
+#### Direct Download
+Download the latest version from the [releases page](https://github.com/eutychus/jquery-tokeninput/releases).
+
+#### Bower
+```bash
+bower install eutychus/jquery-tokeninput
+```
+
+#### npm
+```bash
+npm install jquery.tokeninput
+```
 
 ### Create a server-side script to handle search requests
 
@@ -76,7 +108,7 @@ attach to your text input:
 Tokeninput stylesheet:
 
 ```html
-<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.5.1/jquery.min.js"></script>
+<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
 <script type="text/javascript" src="yourfiles/jquery.tokeninput.js"></script>
 <link rel="stylesheet" type="text/css" href="yourfiles/token-input.css" />
 
@@ -159,10 +191,14 @@ available:
 Please report any bugs or feature requests on the github issues page for this
 project here:
 
-<https://github.com/loopj/jquery-tokeninput/issues>
+<https://github.com/eutychus/jquery-tokeninput/issues>
 
 ## License
 
 Tokeninput is released under a dual license. You can choose either the GPL or
 MIT license depending on the project you are using it in and how you wish to
 use it.
+
+## Credits
+
+This project is a fork of [loopj/jquery-tokeninput](https://github.com/loopj/jquery-tokeninput), originally created by James Smith. The fork has been updated to support jQuery 3.x and modern build tools.
