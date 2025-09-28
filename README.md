@@ -53,21 +53,6 @@ Facebook style item selection
 
 ## Installation & Setup
 
-### Installation Options
-
-#### Direct Download
-Download the latest version from the [releases page](https://github.com/eutychus/jquery-tokeninput/releases).
-
-#### Bower
-```bash
-bower install eutychus/jquery-tokeninput
-```
-
-#### npm
-```bash
-npm install jquery.tokeninput
-```
-
 ### Create a server-side script to handle search requests
 
 Create a server-side script (PHP, Rails, ASP.net, etc) to generate your
