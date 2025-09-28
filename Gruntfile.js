@@ -8,7 +8,7 @@ module.exports = function(grunt) {
         curly: true,
         eqeqeq: true,
         immed: true,
-        latedef: true,
+        latedef: false,  // Allow function hoisting
         newcap: true,
         noarg: true,
         sub: true,
@@ -25,9 +25,7 @@ module.exports = function(grunt) {
         options: {
           force: true  // Don't fail build on JSHint warnings in CI
         },
-        files: {
-          src: ['src/<%= pkg.name %>.js']
-        }
+        src: ['src/<%= pkg.name %>.js']
       }
     },
     uglify: {
@@ -35,8 +33,9 @@ module.exports = function(grunt) {
         banner: '/*! <%= pkg.name %> <%= grunt.template.today("yyyy-mm-dd") %> */\n'
       },
       build: {
-        src: 'src/<%= pkg.name %>.js',
-        dest: 'build/<%= pkg.name %>.min.js'
+        files: {
+          'build/<%= pkg.name %>.min.js': ['src/<%= pkg.name %>.js']
+        }
       }
     }
   });

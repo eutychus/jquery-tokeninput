@@ -1,45 +1,48 @@
+---
 name: CI
 
 on:
   push:
-    branches: [ master ]
+    branches: [master]
+    paths-ignore:
+      - 'build/**'  # Don't run CI when only the build artifacts change
   pull_request:
-    branches: [ master ]
+    branches: [master]
 
 jobs:
   build:
     runs-on: ubuntu-latest
-    
-    steps:
-    - uses: actions/checkout@v4
-    
-    - name: Use Node.js 24.x
-      uses: actions/setup-node@v4
-      with:
-        node-version: 24.x
-        cache: 'npm'
-    
-    - name: Install dependencies
-      run: npm ci
-    
-    - name: Check for deprecated jQuery APIs
-      run: npm run check:deprecated
 
-    - name: Build project (includes linting)
-      run: npm run build
-    
-    - name: Check that build artifacts exist
-      run: |
-        if [ ! -f "build/jquery.tokeninput.min.js" ]; then
-          echo "Build failed: build/jquery.tokeninput.min.js not found"
-          exit 1
-        fi
-        echo "Build successful: jquery.tokeninput.min.js created"
-        ls -la build/
-    
-    - name: Upload build artifacts
-      uses: actions/upload-artifact@v4
-      with:
-        name: built-assets
-        path: build/
-        retention-days: 30
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Use Node.js 24.x
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24.x
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Check for deprecated jQuery APIs
+        run: npm run check:deprecated
+
+      - name: Build project (includes linting)
+        run: npm run build
+
+      - name: Check that build artifacts exist
+        run: |
+          if [ ! -f "build/jquery.tokeninput.min.js" ]; then
+            echo "Build failed: build/jquery.tokeninput.min.js not found"
+            exit 1
+          fi
+          echo "Build successful: jquery.tokeninput.min.js created"
+          ls -la build/
+
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: built-assets
+          path: build/
+          retention-days: 30

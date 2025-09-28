@@ -1,7 +1,7 @@
 /// <reference types="jquery" />
 /*
  * jQuery Plugin: Tokenizing Autocomplete Text Entry
- * Version 1.6.2
+ * Version 3.0.0
  *
  * Copyright (c) 2009 James Smith (http://loopj.com)
  * Licensed jointly under the GPL and MIT licenses,
