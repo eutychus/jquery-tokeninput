@@ -5,14 +5,24 @@
     "build": "grunt build",
     "lint": "grunt lint",
     "lint:ci": "grunt jshint:ci",
+    "check:deprecated": "eslint --max-warnings=0 \"src/**/*.js\"",
     "test": "grunt build",
     "prepublishOnly": "npm run build"
   },
   "devDependencies": {
+    "@types/jquery": "^3.5.29",
+    "@typescript-eslint/parser": "^7.8.0",
+    "eslint": "^8.57.1",
+    "eslint-plugin-deprecation": "^1.4.1",
     "grunt": "~0.4.2",
     "grunt-cli": "~0.1.13",
     "grunt-contrib-jshint": "~0.6.3",
     "grunt-contrib-nodeunit": "~0.2.0",
-    "grunt-contrib-uglify": "~0.3.2"
+    "grunt-contrib-uglify": "~0.3.2",
+    "typescript": "^5.4.0"
+  },
+  "engines": {
+    "node": ">=24.0.0",
+    "npm": ">=10.0.0"
   }
 }

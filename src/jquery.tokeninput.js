@@ -1,3 +1,4 @@
+/// <reference types="jquery" />
 /*
  * jQuery Plugin: Tokenizing Autocomplete Text Entry
  * Version 1.6.2
@@ -6,6 +7,9 @@
  * Licensed jointly under the GPL and MIT licenses,
  * choose which one suits your project best!
  *
+ */
+/**
+ * @param {JQueryStatic} $
  */
 ;(function ($) {
   var DEFAULT_SETTINGS = {
