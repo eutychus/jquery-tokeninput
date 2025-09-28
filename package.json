@@ -1,6 +1,12 @@
 {
   "name": "jquery.tokeninput",
   "version": "2.0.0",
+  "scripts": {
+    "build": "grunt",
+    "lint": "grunt jshint",
+    "test": "grunt jshint",
+    "prepublishOnly": "npm run build"
+  },
   "devDependencies": {
     "grunt": "~0.4.2",
     "grunt-contrib-jshint": "~0.6.3",

@@ -1,6 +1,8 @@
 
 # jQuery Tokeninput: A Tokenizing Autocomplete Text Entry
 
+[![CI](https://github.com/eutychus/jquery-tokeninput/actions/workflows/ci.yml/badge.svg)](https://github.com/eutychus/jquery-tokeninput/actions/workflows/ci.yml)
+
 ## Overview
 
 Tokeninput is a jQuery plugin which allows your users to select multiple items
