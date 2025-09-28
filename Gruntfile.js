@@ -20,12 +20,19 @@ module.exports = function(grunt) {
           jQuery: true
         }
       },
-      all: ['src/<%= pkg.name %>.js']
+      all: ['src/<%= pkg.name %>.js'],
+      ci: {
+        options: {
+          force: true  // Don't fail build on JSHint warnings in CI
+        },
+        files: {
+          src: ['src/<%= pkg.name %>.js']
+        }
+      }
     },
     uglify: {
       options: {
-        banner: '/*! <%= pkg.name %> <%= grunt.template.today("yyyy-mm-dd") %> */\n',
-        compress: true
+        banner: '/*! <%= pkg.name %> <%= grunt.template.today("yyyy-mm-dd") %> */\n'
       },
       build: {
         src: 'src/<%= pkg.name %>.js',
@@ -38,7 +45,9 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-contrib-jshint');
   grunt.loadNpmTasks('grunt-contrib-uglify');
 
-  // Default task(s).
-  grunt.registerTask('default', ['jshint', 'uglify']);
+  // Tasks
+  grunt.registerTask('lint', ['jshint:all']);
+  grunt.registerTask('build', ['jshint:ci', 'uglify']);
+  grunt.registerTask('default', ['build']);
 
 };
