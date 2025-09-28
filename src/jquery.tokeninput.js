@@ -196,6 +196,45 @@
   // TokenList class for each input
   $.TokenList = function (input, url_or_data, settings) {
       //
+      // Private functions (declared first to avoid JSHint warnings)
+      //
+
+      // compute the dynamic URL
+      function computeURL() {
+          var settings = $(input).data("settings");
+          return typeof settings.url === 'function' ? settings.url.call(settings) : settings.url;
+      }
+
+      // Toggles the widget between enabled and disabled state, or according
+      // to the [disable] parameter.
+      function toggleDisabled(disable) {
+          if (typeof disable === 'boolean') {
+              $(input).data("settings").disabled = disable;
+          } else {
+              $(input).data("settings").disabled = !$(input).data("settings").disabled;
+          }
+          input_box.attr('disabled', $(input).data("settings").disabled);
+          token_list.toggleClass($(input).data("settings").classes.disabled, $(input).data("settings").disabled);
+          // if there is any token selected we deselect it
+          if(selected_token) {
+              deselect_token($(selected_token), POSITION.END);
+          }
+          hiddenInput.attr('disabled', $(input).data("settings").disabled);
+      }
+
+      function resize_input() {
+          if(input_val === (input_val = input_box.val())) {return;}
+
+          // Get width left on the current line
+          var width_left = token_list.width() - input_box.offset().left - token_list.offset().left;
+          // Enter new content into resizer and resize input accordingly
+          input_resizer.html(_escapeHTML(input_val) || _escapeHTML(settings.placeholder));
+          // Get maximum width, minimum the size of input and maximum the widget's width
+          input_box.width(Math.min(token_list.width(),
+                                   Math.max(width_left, input_resizer.width() + 30)));
+      }
+
+      //
       // Initialization
       //
 
@@ -287,7 +326,7 @@
                         next_token = input_token.next();
 
                         if((previous_token.length && previous_token.get(0) === selected_token) ||
-						   (next_token.length && next_token.get(0) === selected_token)) {
+                           (next_token.length && next_token.get(0) === selected_token)) {
                             // Check if there is a previous/next token and it is selected
                             if(event.keyCode === KEY.LEFT || event.keyCode === KEY.UP) {
                                 deselect_token($(selected_token), POSITION.BEFORE);
@@ -476,7 +515,7 @@
           $.each(li_data, function (index, value) {
               insert_token(value);
               checkTokenLimit();
-              input_box.attr("placeholder", null)
+              input_box.attr("placeholder", null);
           });
       }
 
@@ -539,27 +578,6 @@
       // Private functions
       //
 
-      function escapeHTML(text) {
-        return $(input).data("settings").enableHTML ? text : _escapeHTML(text);
-      }
-
-      // Toggles the widget between enabled and disabled state, or according
-      // to the [disable] parameter.
-      function toggleDisabled(disable) {
-          if (typeof disable === 'boolean') {
-              $(input).data("settings").disabled = disable
-          } else {
-              $(input).data("settings").disabled = !$(input).data("settings").disabled;
-          }
-          input_box.attr('disabled', $(input).data("settings").disabled);
-          token_list.toggleClass($(input).data("settings").classes.disabled, $(input).data("settings").disabled);
-          // if there is any token selected we deselect it
-          if(selected_token) {
-              deselect_token($(selected_token), POSITION.END);
-          }
-          hiddenInput.attr('disabled', $(input).data("settings").disabled);
-      }
-
       function checkTokenLimit() {
           if($(input).data("settings").tokenLimit !== null && token_count >= $(input).data("settings").tokenLimit) {
               input_box.hide();
@@ -568,16 +586,8 @@
           }
       }
 
-      function resize_input() {
-          if(input_val === (input_val = input_box.val())) {return;}
-
-          // Get width left on the current line
-          var width_left = token_list.width() - input_box.offset().left - token_list.offset().left;
-          // Enter new content into resizer and resize input accordingly
-          input_resizer.html(_escapeHTML(input_val) || _escapeHTML(settings.placeholder));
-          // Get maximum width, minimum the size of input and maximum the widget's width
-          input_box.width(Math.min(token_list.width(),
-                                   Math.max(width_left, input_resizer.width() + 30)));
+      function escapeHTML(text) {
+        return $(input).data("settings").enableHTML ? text : _escapeHTML(text);
       }
 
       function add_freetagging_tokens() {
@@ -602,7 +612,9 @@
           var $this_token = $($(input).data("settings").tokenFormatter(item));
           var readonly = item.readonly === true;
 
-          if(readonly) $this_token.addClass($(input).data("settings").classes.tokenReadOnly);
+          if(readonly) {
+              $this_token.addClass($(input).data("settings").classes.tokenReadOnly);
+          }
 
           $this_token.addClass($(input).data("settings").classes.token).insertBefore(input_token);
 
@@ -670,7 +682,7 @@
           input_box.width(1);
 
           // Insert the new tokens
-          if($(input).data("settings").tokenLimit == null || token_count < $(input).data("settings").tokenLimit) {
+          if($(input).data("settings").tokenLimit === null || token_count < $(input).data("settings").tokenLimit) {
               insert_token(item);
               // Remove the placeholder so it's not seen after you've added a token
               input_box.attr("placeholder", null);
@@ -745,7 +757,9 @@
           var callback = $(input).data("settings").onDelete;
 
           var index = token.prevAll().length;
-          if(index > selected_token_index) index--;
+          if(index > selected_token_index) {
+              index--;
+          }
 
           // Delete the token
           token.remove();
@@ -756,10 +770,12 @@
 
           // Remove this token from the saved list
           saved_tokens = saved_tokens.slice(0,index).concat(saved_tokens.slice(index+1));
-          if (saved_tokens.length == 0) {
-              input_box.attr("placeholder", settings.placeholder)
+          if (saved_tokens.length === 0) {
+              input_box.attr("placeholder", settings.placeholder);
           }
-          if(index < selected_token_index) selected_token_index--;
+          if(index < selected_token_index) {
+              selected_token_index--;
+          }
 
           // Update the hidden input
           update_hiddenInput(saved_tokens, hiddenInput);
@@ -782,8 +798,9 @@
       // Update the hidden input box value
       function update_hiddenInput(saved_tokens, hiddenInput) {
           var token_values = $.map(saved_tokens, function (el) {
-              if(typeof $(input).data("settings").tokenValue == 'function')
-                return $(input).data("settings").tokenValue.call(this, el);
+              if(typeof $(input).data("settings").tokenValue === 'function') {
+                  return $(input).data("settings").tokenValue.call(this, el);
+              }
 
               return el[$(input).data("settings").tokenValue];
           });
@@ -853,7 +870,7 @@
                   $.each(results, function(index, value) {
                       var notFound = true;
                       $.each(currentTokens, function(cIndex, cValue) {
-                          if (value[$(input).data("settings").propertyToSearch] == cValue[$(input).data("settings").propertyToSearch]) {
+                          if (value[$(input).data("settings").propertyToSearch] === cValue[$(input).data("settings").propertyToSearch]) {
                               notFound = false;
                               return false;
                           }
@@ -1010,8 +1027,9 @@
                   if ($(input).data("settings").excludeCurrent) {
                       var currentTokens = $(input).data("tokenInputObject").getTokens();
                       var tokenList = $.map(currentTokens, function (el) {
-                          if(typeof $(input).data("settings").tokenValue == 'function')
+                          if(typeof $(input).data("settings").tokenValue === 'function') {
                               return $(input).data("settings").tokenValue.call(this, el);
+                          }
 
                           return el[$(input).data("settings").tokenValue];
                       });
@@ -1054,11 +1072,6 @@
           }
       }
 
-      // compute the dynamic URL
-      function computeURL() {
-          var settings = $(input).data("settings");
-          return typeof settings.url == 'function' ? settings.url.call(settings) : settings.url;
-      }
 
       // Bring browser focus to the specified object.
       // Use of setTimeout is to get around an IE bug.
@@ -1068,10 +1081,10 @@
       function focusWithTimeout(object) {
           setTimeout(
             function() {
-			  object.focus();
+              object.focus();
             },
-			50
-		  );
+            50
+          );
       }
   };
 
